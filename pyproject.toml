@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=45", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "blofin"
+version = "0.0.2"
+description = "BloFin API SDK"
+readme = "README.md"
+authors = [{name = "Nomeida", email = "nomeida@proton.me"}]
+license = {text = "MIT"}
+classifiers = [
+    "Programming Language :: Python :: 3",
+]
+repository = "https://github.com/nomeida/blofin-python"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+packages = ["blofin"]
