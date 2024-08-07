@@ -15,6 +15,13 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 requires-python = ">=3.7"
+dependencies = [
+    "certifi>=2024.7.4",
+    "charset-normalizer>=3.3.2",
+    "idna>=3.7",
+    "requests>=2.32.3",
+    "urllib3>=2.2.2",
+]
 
 [project.urls]
 "Homepage" = "https://github.com/nomeida/blofin-python"
@@ -26,14 +33,3 @@ packages = ["blofin"]
 
 [tool.setuptools_scm]
 write_to = "src/blofin/_version.py"
-
-# Add any dependencies your package has
-[project.dependencies]
-certifi = ">=2024.7.4"
-charset-normalizer = ">=3.3.2"
-idna = ">=3.7"
-requests = ">=2.32.3"
-urllib3 = ">=2.2.2"
-
-# Add any optional dependencies
-[project.optional-dependencies]
