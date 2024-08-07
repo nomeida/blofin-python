@@ -1,16 +1,18 @@
-from .constants import REST_API_URL, WEBSOCKET_PUBLIC_URL, WEBSOCKET_PRIVATE_URL
-from .exceptions import (
+from blofin.constants import REST_API_URL, WEBSOCKET_PUBLIC_URL, WEBSOCKET_PRIVATE_URL
+from blofin.exceptions import (
     BloFinAPIException, BloFinRequestException, BloFinParameterException,
     BloFinAuthException, BloFinOrderException, BloFinPositionException,
     BloFinBalanceException
 )
-from .api.public import PublicAPI
-from .api.account import AccountAPI
-from .api.trading import TradingAPI
-from .api.affiliate import AffiliateAPI
-from .api.user import UserAPI
-from .auth import Auth
-from .utils import check_auth_credentials
+from blofin.api.public import PublicAPI
+from blofin.api.account import AccountAPI
+from blofin.api.trading import TradingAPI
+from blofin.api.affiliate import AffiliateAPI
+from blofin.api.user import UserAPI
+from blofin.auth import Auth
+from blofin.utils import check_auth_credentials
+
+# Rest of the client.py content...
 
 class BloFinClient:
     def __init__(self, api_key=None, api_secret=None, passphrase=None, use_server_time=False):
