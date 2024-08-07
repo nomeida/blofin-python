@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "blofin"
-version = "0.3.2"  # Static version number
+version = "0.3.3"  # Static version number
 description = "BloFin API SDK"
 readme = "readme.md"
 authors = [{name = "Nomeida", email = "nomeida@proton.me"}]

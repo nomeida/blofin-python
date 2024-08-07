@@ -1,3 +1,1 @@
-from ._version import __version__
-
-# ... existing code ...
+__version__ = "0.3.3"
