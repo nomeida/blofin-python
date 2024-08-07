@@ -9,6 +9,7 @@ build/
 .idea/
 .vscode/
 *.swp
+/venv/*
 
 .DS_Store
 Thumbs.db
