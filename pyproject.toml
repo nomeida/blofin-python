@@ -1,10 +1,10 @@
 [build-system]
-requires = ["setuptools>=45", "wheel", "setuptools_scm[toml]>=6.2"]
+requires = ["setuptools>=45", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "blofin"
-dynamic = ["version"]
+version = "0.3.2"  # Static version number
 description = "BloFin API SDK"
 readme = "readme.md"
 authors = [{name = "Nomeida", email = "nomeida@proton.me"}]
@@ -30,8 +30,3 @@ dependencies = [
 [tool.setuptools]
 package-dir = {"" = "src"}
 packages = ["blofin"]
-
-[tool.setuptools_scm]
-write_to = "src/blofin/_version.py"
-version_scheme = "python-simplified-semver"
-local_scheme = "node-and-timestamp"
