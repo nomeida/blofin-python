@@ -18,7 +18,13 @@ Here's a quick example of how to use the BloFin API SDK:
 from blofin import BloFinClient
 
 # Initialize the client
-client = BloFinClient(api_key='your_api_key', api_secret='your_api_secret', passphrase='your_passphrase')
+client = BloFinClient(
+    api_key='your_api_key', 
+    api_secret='your_api_secret', 
+    passphrase='your_passphrase',
+    use_server_time=False, #Default: False - If you want to use BloFin's server time for requests
+)
+
 
 # Use the client to interact with different APIs
 ```
