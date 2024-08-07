@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "blofin"
 dynamic = ["version"]
 description = "BloFin API SDK"
-readme = {file = "README.md", content-type = "text/markdown"}
+readme = "readme.md"
 authors = [{name = "Nomeida", email = "nomeida@proton.me"}]
 license = {text = "MIT"}
 classifiers = [
@@ -33,5 +33,5 @@ packages = ["blofin"]
 
 [tool.setuptools_scm]
 write_to = "src/blofin/_version.py"
-version_scheme = "release-branch-semver"
-local_scheme = "no-local-version"
+version_scheme = "python-simplified-semver"
+local_scheme = "node-and-timestamp"
