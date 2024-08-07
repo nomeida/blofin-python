@@ -33,3 +33,5 @@ packages = ["blofin"]
 
 [tool.setuptools_scm]
 write_to = "src/blofin/_version.py"
+version_scheme = "post-release"
+local_scheme = "no-local-version"
