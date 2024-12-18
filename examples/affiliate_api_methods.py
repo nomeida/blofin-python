@@ -3,9 +3,9 @@ import os
 from datetime import datetime, timedelta
 
 # Add the parent directory to the Python path
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../src')))
 
-from src.blofin.client import BloFinClient
+from blofin.client import BloFinClient
 
 # Replace these with your actual API credentials
 API_KEY    = ""

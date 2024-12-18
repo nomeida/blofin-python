@@ -186,3 +186,249 @@ class TradingAPI:
         
         params = filter_none_params(instId=inst_id, orderType=order_type, state=state, after=after, before=before, begin=begin, end=end, limit=limit)
         return send_request('GET', TRADE_ORDERS_HISTORY_ENDPOINT, self.client.auth, params=params, authenticate=True)
+
+    def get_tpsl_order_history(self, inst_id: Optional[str] = None, tpsl_id: Optional[str] = None, 
+                              client_order_id: Optional[str] = None, state: Optional[str] = None,
+                              after: Optional[str] = None, before: Optional[str] = None, 
+                              limit: Optional[int] = None):
+        """
+        Retrieve a list of all TP/SL orders under the current account.
+        
+        Args:
+            inst_id (str, optional): Instrument ID, e.g. BTC-USDT
+            tpsl_id (str, optional): TP/SL order ID
+            client_order_id (str, optional): Client-supplied ID
+            state (str, optional): Order state (live, effective, canceled, order_failed)
+            after (str, optional): Pagination of data to return records earlier than the requested tpslId
+            before (str, optional): Pagination of data to return records newer than the requested tpslId
+            limit (int, optional): Number of results per request. Maximum is 100, default is 20
+            
+        Returns:
+            dict: TPSL order history data
+        """
+        valid_states = ['live', 'effective', 'canceled', 'order_failed']
+        if state and state not in valid_states:
+            raise BloFinParameterException(f"Invalid state. Must be one of: {', '.join(valid_states)}")
+        
+        params = filter_none_params(
+            instId=inst_id,
+            tpslId=tpsl_id,
+            clientOrderId=client_order_id,
+            state=state,
+            after=after,
+            before=before,
+            limit=limit
+        )
+        return send_request('GET', TRADE_ORDERS_TPSL_HISTORY_ENDPOINT, self.client.auth, params=params, authenticate=True)
+
+    def get_trade_history(self, inst_id: Optional[str] = None, order_id: Optional[str] = None,
+                         after: Optional[str] = None, before: Optional[str] = None,
+                         begin: Optional[str] = None, end: Optional[str] = None,
+                         limit: Optional[int] = None):
+        """
+        Retrieve recently-filled transaction details.
+        
+        Args:
+            inst_id (str, optional): Instrument ID, e.g. BTC-USDT
+            order_id (str, optional): Order ID
+            after (str, optional): Pagination of data to return records earlier than the requested tradeId
+            before (str, optional): Pagination of data to return records newer than the requested tradeId
+            begin (str, optional): Filter with a begin timestamp (Unix timestamp in milliseconds)
+            end (str, optional): Filter with an end timestamp (Unix timestamp in milliseconds)
+            limit (int, optional): Number of results per request. Maximum is 100, default is 20
+            
+        Returns:
+            dict: Trade history data
+        """
+        params = filter_none_params(
+            instId=inst_id,
+            orderId=order_id,
+            after=after,
+            before=before,
+            begin=begin,
+            end=end,
+            limit=limit
+        )
+        return send_request('GET', TRADE_FILLS_HISTORY_ENDPOINT, self.client.auth, params=params, authenticate=True)
+
+    def get_trade_order_price_range(self, inst_id: str, side: str):
+        """
+        Query price limit range for an instrument.
+        
+        Args:
+            inst_id (str): Instrument ID, e.g. BTC-USDT
+            side (str): Order side ('buy' or 'sell')
+            
+        Returns:
+            dict: Price range data containing maximum and minimum prices
+        """
+        if side not in ORDER_SIDES:
+            raise BloFinParameterException(f"Invalid side. Must be one of: {', '.join(ORDER_SIDES)}")
+        
+        params = {
+            'instId': inst_id,
+            'side': side
+        }
+        return send_request('GET', TRADE_ORDER_PRICE_RANGE_ENDPOINT, self.client.auth, params=params, authenticate=True)
+
+    def place_algo_order(self, inst_id: str, margin_mode: str, position_side: str, 
+                          side: str, size: Union[int, float], order_type: str = 'trigger',
+                          order_price: Optional[float] = None, client_order_id: Optional[str] = None,
+                          reduce_only: Optional[bool] = None, broker_id: Optional[str] = None,
+                          trigger_price: Optional[float] = None,
+                          trigger_price_type: Optional[str] = None,
+                          attach_algo_orders: Optional[List[dict]] = None) -> dict:
+        """
+        Place an algorithmic order.
+
+        Args:
+            inst_id (str): Instrument ID, e.g. BTC-USDT
+            margin_mode (str): Margin mode ('cross' or 'isolated')
+            position_side (str): Position side ('net', 'long', or 'short')
+            side (str): Order side ('buy' or 'sell')
+            size (Union[int, float]): Order size. Use -1 for entire position
+            order_type (str, optional): Algo type (default: 'trigger')
+            order_price (float, optional): Order price. Use -1 for market price
+            client_order_id (str, optional): Client-supplied ID
+            reduce_only (bool, optional): Whether order can only reduce position size
+            broker_id (str, optional): Broker ID
+            trigger_price (float, optional): Trigger price for trigger orders
+            trigger_price_type (str, optional): Type of trigger price (e.g., 'last')
+            attach_algo_orders (List[dict], optional): Attached TP/SL orders info
+
+        Returns:
+            dict: Order placement result containing algo_id and client_order_id
+        """
+        if margin_mode not in MARGIN_MODES:
+            raise BloFinParameterException(f"Invalid margin_mode. Must be one of: {', '.join(MARGIN_MODES)}")
+        if position_side not in POSITION_SIDES:
+            raise BloFinParameterException(f"Invalid position_side. Must be one of: {', '.join(POSITION_SIDES)}")
+        if side not in ORDER_SIDES:
+            raise BloFinParameterException(f"Invalid side. Must be one of: {', '.join(ORDER_SIDES)}")
+        if order_type not in ALGO_ORDER_TYPES:
+            raise BloFinParameterException(f"Invalid order_type. Must be one of: {', '.join(ALGO_ORDER_TYPES)}")
+        if trigger_price_type and trigger_price_type not in TRIGGER_PRICE_TYPES:
+            raise BloFinParameterException(f"Invalid trigger_price_type. Must be one of: {', '.join(TRIGGER_PRICE_TYPES)}")
+
+        data = {
+            'instId': inst_id,
+            'marginMode': margin_mode,
+            'positionSide': position_side,
+            'side': side,
+            'size': str(size),
+            'orderType': order_type
+        }
+
+        if order_price is not None:
+            data['orderPrice'] = str(order_price)
+        if client_order_id is not None:
+            data['clientOrderId'] = client_order_id
+        if reduce_only is not None:
+            data['reduceOnly'] = str(reduce_only).lower()
+        if broker_id is not None:
+            data['brokerId'] = broker_id
+        if trigger_price is not None:
+            data['triggerPrice'] = str(trigger_price)
+        if trigger_price_type is not None:
+            data['triggerPriceType'] = trigger_price_type
+        if attach_algo_orders is not None:
+            data['attachAlgoOrders'] = attach_algo_orders
+
+        return send_request('POST', TRADE_ORDER_ALGO_ENDPOINT, self.client.auth, data=data, authenticate=True)
+
+    def cancel_algo_order(self, inst_id: str, algo_id: str, client_order_id: Optional[str] = None) -> dict:
+        """
+        Cancel an algorithmic order.
+
+        Args:
+            inst_id (str): Instrument ID
+            algo_id (str): Algo order ID
+            client_order_id (str, optional): Client-supplied ID
+
+        Returns:
+            dict: Cancellation result
+        """
+        data = {
+            'instId': inst_id,
+            'algoId': algo_id
+        }
+        if client_order_id:
+            data['clientOrderId'] = client_order_id
+
+        return send_request('POST', TRADE_CANCEL_ALGO_ENDPOINT, self.client.auth, data=data, authenticate=True)
+
+    def get_active_algo_orders(self, inst_id: Optional[str] = None, algo_id: Optional[str] = None,
+                             client_order_id: Optional[str] = None, after: Optional[str] = None,
+                             before: Optional[str] = None, limit: Optional[int] = None,
+                             order_type: str = 'trigger') -> dict:
+        """
+        Retrieve a list of untriggered algo orders under the current account.
+
+        Args:
+            inst_id (str, optional): Instrument ID
+            algo_id (str, optional): Algo order ID
+            client_order_id (str, optional): Client-supplied ID
+            after (str, optional): Pagination of data to return records earlier than the requested algoId
+            before (str, optional): Pagination of data to return records newer than the requested algoId
+            limit (int, optional): Number of results per request (default: 20, max: 100)
+            order_type (str, optional): Algo type (default: 'trigger')
+
+        Returns:
+            dict: Active algo orders data
+        """
+        if order_type not in ALGO_ORDER_TYPES:
+            raise BloFinParameterException(f"Invalid order_type. Must be one of: {', '.join(ALGO_ORDER_TYPES)}")
+        if limit is not None and (not isinstance(limit, int) or limit <= 0 or limit > ALGO_MAX_LIMIT):
+            raise BloFinParameterException(f"Limit must be a positive integer not exceeding {ALGO_MAX_LIMIT}")
+
+        params = filter_none_params(
+            instId=inst_id,
+            algoId=algo_id,
+            clientOrderId=client_order_id,
+            after=after,
+            before=before,
+            limit=limit,
+            orderType=order_type
+        )
+        return send_request('GET', TRADE_ORDERS_ALGO_PENDING_ENDPOINT, self.client.auth, params=params, authenticate=True)
+
+    def get_algo_order_history(self, inst_id: Optional[str] = None, algo_id: Optional[str] = None,
+                             client_order_id: Optional[str] = None, state: Optional[str] = None,
+                             after: Optional[str] = None, before: Optional[str] = None,
+                             limit: Optional[int] = None, order_type: str = 'trigger') -> dict:
+        """
+        Retrieve a list of all algo orders under the current account.
+
+        Args:
+            inst_id (str, optional): Instrument ID
+            algo_id (str, optional): Algo order ID
+            client_order_id (str, optional): Client-supplied ID
+            state (str, optional): Order state ('live', 'effective', 'canceled', 'order_failed')
+            after (str, optional): Pagination of data to return records earlier than the requested algoId
+            before (str, optional): Pagination of data to return records newer than the requested algoId
+            limit (int, optional): Number of results per request (default: 20, max: 100)
+            order_type (str, optional): Algo type (default: 'trigger')
+
+        Returns:
+            dict: Algo order history data
+        """
+        if order_type not in ALGO_ORDER_TYPES:
+            raise BloFinParameterException(f"Invalid order_type. Must be one of: {', '.join(ALGO_ORDER_TYPES)}")
+        if limit is not None and (not isinstance(limit, int) or limit <= 0 or limit > ALGO_MAX_LIMIT):
+            raise BloFinParameterException(f"Limit must be a positive integer not exceeding {ALGO_MAX_LIMIT}")
+        
+        valid_states = ['live', 'effective', 'canceled', 'order_failed']
+        if state and state not in valid_states:
+            raise BloFinParameterException(f"Invalid state. Must be one of: {', '.join(valid_states)}")
+
+        params = filter_none_params(
+            instId=inst_id,
+            algoId=algo_id,
+            clientOrderId=client_order_id,
+            state=state,
+            after=after,
+            before=before,
+            limit=limit,
+            orderType=order_type
+        )
+        return send_request('GET', TRADE_ORDERS_ALGO_HISTORY_ENDPOINT, self.client.auth, params=params, authenticate=True)
