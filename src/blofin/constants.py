@@ -52,6 +52,12 @@ AFFILIATE_SUB_INVITEES_ENDPOINT   = '/api/v1/affiliate/sub-invitees'
 AFFILIATE_SUB_AFFILIATES_ENDPOINT = '/api/v1/affiliate/sub-affiliates'
 AFFILIATE_INVITEES_DAILY_ENDPOINT = '/api/v1/affiliate/invitees/daily'
 
+# Algo trading endpoints
+TRADE_ORDER_ALGO_ENDPOINT = '/api/v1/trade/order-algo'
+TRADE_CANCEL_ALGO_ENDPOINT = '/api/v1/trade/cancel-algo'
+TRADE_ORDERS_ALGO_PENDING_ENDPOINT = '/api/v1/trade/orders-algo-pending'
+TRADE_ORDERS_ALGO_HISTORY_ENDPOINT = '/api/v1/trade/orders-algo-history'
+
 # User API endpoints
 USER_API_KEY_INFO_ENDPOINT = '/api/v1/user/query-apikey'
 
@@ -149,6 +155,9 @@ ORDER_TYPE_IOC = "ioc"
 
 ORDER_TYPES = [ORDER_TYPE_MARKET, ORDER_TYPE_LIMIT, ORDER_TYPE_POST_ONLY, ORDER_TYPE_FOK, ORDER_TYPE_IOC]
 
+ALGO_ORDER_TYPES = ['trigger']  # Add more as they become available
+TRIGGER_PRICE_TYPES = ['last']  # Add more as they become available
+
 # Margin mode constants
 MARGIN_MODE_CROSS = "cross"
 MARGIN_MODE_ISOLATED = "isolated"
@@ -207,3 +216,6 @@ ACCOUNT_MAX_LIMIT = 100
 
 # Trading max order size
 TRADING_MAX_ORDER_SIZE = 1000
+
+# Algo trading max order size
+ALGO_MAX_LIMIT = 100
